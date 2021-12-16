@@ -212,10 +212,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coins: 0
-  movementDirection: 0
   speed: 4
   jumps: 1
-  jump: 500
   JumpForce: 1
   _rigidbody: {fileID: 0}
 --- !u!54 &3695540486070585083
