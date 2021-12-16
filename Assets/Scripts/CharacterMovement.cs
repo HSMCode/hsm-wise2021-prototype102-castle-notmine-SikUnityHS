@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class CharacterMovement : MonoBehaviour
@@ -9,6 +11,7 @@ public class CharacterMovement : MonoBehaviour
     public int speed = 3;
     public int jumps = 1;
     public int JumpForce = 7;
+    public AudioClip coinSound;
 
     public Rigidbody _rigidbody;
 
@@ -36,6 +39,12 @@ public class CharacterMovement : MonoBehaviour
             _rigidbody.AddForce(new Vector2(0, JumpForce), ForceMode.Impulse);
             jumps--;
         }
+        
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            Time.timeScale = 1;
+        }
 
             Text coinText = GameObject.Find("Canvas/Text").GetComponent<Text>();
             coinText.text = "Coins: " + coins + "/3";   
@@ -44,14 +53,8 @@ public class CharacterMovement : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        
-      if (collision.gameObject.name == "Coin")
-        {
-           Destroy(collision.gameObject);
-           coins++;
-        }
 
-        if (collision.gameObject.name == "Floor" && jumps == 0)
+        if (collision.gameObject.tag == "Floor" && jumps == 0)
         {
             jumps = 1;
         }
@@ -65,7 +68,19 @@ public class CharacterMovement : MonoBehaviour
         {
             Text winText = GameObject.Find("Canvas/WinMessage").GetComponent<Text>();
             winText.text = "You win!";
+            Time.timeScale = 0;
         }
+    
 
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.name == "Coin")
+        {
+            Destroy(other.gameObject);
+            AudioSource.PlayClipAtPoint(coinSound, transform.position);
+            coins++;
+        }
     }
 }
