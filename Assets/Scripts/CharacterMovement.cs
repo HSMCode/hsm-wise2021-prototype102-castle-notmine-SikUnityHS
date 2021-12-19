@@ -13,7 +13,7 @@ public class CharacterMovement : MonoBehaviour
     public int JumpForce = 7;
     public AudioClip coinSound;
 
-    public Rigidbody _rigidbody;
+    private Rigidbody _rigidbody;
 
 
     /* To Do (Dominik)
@@ -32,7 +32,7 @@ public class CharacterMovement : MonoBehaviour
 
     public void Update()
     {
-        transform.Translate(Vector3.right * Time.deltaTime * speed);
+        transform.Translate(Vector3.right * (Time.deltaTime * speed));
 
         if (Input.GetKeyDown(KeyCode.Space) && jumps > 0)
         {
@@ -46,8 +46,8 @@ public class CharacterMovement : MonoBehaviour
             Time.timeScale = 1;
         }
 
-            Text coinText = GameObject.Find("Canvas/Text").GetComponent<Text>();
-            coinText.text = "Coins: " + coins + "/3";   
+        Text coinText = GameObject.Find("Text").GetComponent<Text>();
+        coinText.text = "Coins: " + coins + "/3";   
     }
 
 
@@ -66,7 +66,7 @@ public class CharacterMovement : MonoBehaviour
 
         if (collision.gameObject.name == "Finish" && coins >= 3)
         {
-            Text winText = GameObject.Find("Canvas/WinMessage").GetComponent<Text>();
+            Text winText = GameObject.Find("WinMessage").GetComponent<Text>();
             winText.text = "You win!";
             Time.timeScale = 0;
         }
