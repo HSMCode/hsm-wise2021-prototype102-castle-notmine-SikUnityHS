@@ -11,7 +11,15 @@ public class CharacterMovement : MonoBehaviour
     public int speed = 3;
     public int jumps = 1;
     public int JumpForce = 7;
+
+    public ParticleSystem jumpParticle;
+    
     public AudioClip coinSound;
+    public AudioClip jumpSound;
+    public AudioClip winSound;
+    
+    public Text notyet;
+    public Text jump;
 
     public Rigidbody _rigidbody;
 
@@ -32,24 +40,37 @@ public class CharacterMovement : MonoBehaviour
 
     public void Update()
     {
+        Movement();
+        
+        Restart();
+
+        Text coinText = GameObject.Find("Canvas/Text").GetComponent<Text>();
+        coinText.text = "Coins: " + coins + "/3";   
+    }
+
+
+    private void Movement()
+    {
         transform.Translate(Vector3.right * Time.deltaTime * speed);
 
         if (Input.GetKeyDown(KeyCode.Space) && jumps > 0)
         {
             _rigidbody.AddForce(new Vector2(0, JumpForce), ForceMode.Impulse);
             jumps--;
+            jump.gameObject.SetActive(false);
+            AudioSource.PlayClipAtPoint(jumpSound, transform.position);
+            jumpParticle.Play();
         }
-        
+    }
+
+    private void Restart()
+    {
         if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             Time.timeScale = 1;
         }
-
-            Text coinText = GameObject.Find("Canvas/Text").GetComponent<Text>();
-            coinText.text = "Coins: " + coins + "/3";   
     }
-
 
     void OnCollisionEnter(Collision collision)
     {
@@ -68,7 +89,15 @@ public class CharacterMovement : MonoBehaviour
         {
             Text winText = GameObject.Find("Canvas/WinMessage").GetComponent<Text>();
             winText.text = "You win!";
+            notyet.gameObject.SetActive(false);
             Time.timeScale = 0;
+            AudioSource.PlayClipAtPoint(winSound, transform.position);
+        }
+
+        if (collision.gameObject.name == "Finish" && coins <3)
+        {
+            Text notyetText = GameObject.Find("Canvas/NotYetMessage").GetComponent<Text>();
+            notyetText.text = "You need more Coins to win me over";
         }
     
 
@@ -79,7 +108,7 @@ public class CharacterMovement : MonoBehaviour
         if (other.gameObject.name == "Coin")
         {
             Destroy(other.gameObject);
-            AudioSource.PlayClipAtPoint(coinSound, transform.position);
+            AudioSource.PlayClipAtPoint(coinSound, transform.position, 0.5f);
             coins++;
         }
     }
